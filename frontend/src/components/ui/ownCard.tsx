@@ -7,7 +7,9 @@ import {
   CardMedia,
 } from "@mui/material";
 
-export default function OwnCard({ title, imageUrl, onClick }) {
+import { listRecipeType } from "@/types/recipeTypes";
+
+export default function OwnCard({ title, imageUrl, onClick }: listRecipeType) {
   return (
     <Card sx={{ maxWidth: 300, width: "100%" }}>
       <CardActionArea>
