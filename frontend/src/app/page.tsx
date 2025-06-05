@@ -23,12 +23,18 @@ const RecipeListPage = () => {
     router.push(`/recipe/${id}`);
   };
 
-  const [recipeLoading, setRecipeLoading] = useState<boolean>(true);
+  const [recipeLoading, setRecipeLoading] = useState<boolean>(false);
+  const [recipes, setRecipes] = useState<any[]>([]);
+
   const fetchRecipes = async () => {
+    setRecipeLoading(true);
     try {
-      const recipes = await RecipeService.getAllRecipes({});
+      const data = await RecipeService.getAllRecipes({});
+      setRecipes(data);
     } catch (error) {
       console.error("Failed to fetch recipes", error);
+    } finally {
+      setRecipeLoading(false);
     }
   };
 
@@ -37,21 +43,33 @@ const RecipeListPage = () => {
   }, []);
 
   return (
-    <Container sx={{ py: 4 }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        py: 4,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <Typography variant="h4" gutterBottom>
         All Recipes
       </Typography>
 
-      <Grid container spacing={3}>
-        {recipes.map((recipe) => (
-          <OwnCard
-            key={recipe.id}
-            title={recipe.title}
-            imageUrl={recipe.image}
-            onClick={() => handleRecipeClick(recipe.id)}
-          />
-        ))}
-      </Grid>
+      {recipes.length > 0 && (
+        <Grid container justifyContent="center" spacing={3}>
+          {recipes.map((recipe) => (
+            <Grid item xs={4} key={recipe.idMeal}>
+              <OwnCard
+                title={recipe.strMeal}
+                imageUrl={recipe.strMealThumb}
+                onClick={() => handleRecipeClick(recipe.idMeal)}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Container>
   );
 };
