@@ -1,7 +1,6 @@
 "use client";
 import { Container, Typography, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
-
 import OwnCard from "@components/ownCard";
 const recipes = [
   {
