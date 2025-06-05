@@ -1,8 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import RecipeService from "@/services/recipeService";
 import { Recipe } from "@/types/recipeTypes";
+
 import {
   Box,
   Typography,
@@ -14,51 +16,41 @@ import {
   Paper,
 } from "@mui/material";
 
-interface RecipePageProps {
-  params: {
-    recipeId: string;
-  };
-}
-
-const RecipePage = ({ params }: RecipePageProps) => {
-  const { recipeId } = params;
+const RecipePage = () => {
+  const { recipeId } = useParams();
   const router = useRouter();
 
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [categoryRecipes, setCategoryRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Загрузить данные рецепта по id
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${recipeId}`
-        );
-        const json = await res.json();
-        if (json.meals && json.meals.length > 0) {
-          setRecipe(json.meals[0]);
+  const fetchRecipe = async function () {
+    setLoading(true);
+    try {
+      const [recipeData] = await RecipeService.getRecipe(Number(recipeId));
+      console.log("Fetched recipe data:", recipeData);
+      if (recipeData) {
+        setRecipe(recipeData);
 
-          if (json.meals[0].strCategory) {
-            const categoryRes = await fetch(
-              `https://www.themealdb.com/api/json/v1/1/filter.php?c=${json.meals[0].strCategory}`
-            );
-            const categoryJson = await categoryRes.json();
-            setCategoryRecipes(categoryJson.meals || []);
-          }
+        if (recipeData.strCategory) {
+          const categoryData = await RecipeService.getAllRecipes({
+            category: recipeData.strCategory,
+          });
+
+          setCategoryRecipes(categoryData || []);
         }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (e) {
+      console.error("Error loading recipe:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchRecipe();
   }, [recipeId]);
 
-  // Собираем список ингредиентов
   const getIngredients = (recipe: Recipe) => {
     const ingredients = [];
     for (let i = 1; i <= 20; i++) {
@@ -128,11 +120,7 @@ const RecipePage = ({ params }: RecipePageProps) => {
               {ingredients.map(({ name, measure }, idx) => (
                 <ListItemButton
                   key={idx}
-                  onClick={() =>
-                    router.push(
-                      `/recipes?ingredient=${encodeURIComponent(name)}`
-                    )
-                  }
+                  onClick={() => router.push(`/?ingredient=${name}`)}
                 >
                   <ListItemText primary={`${name} ${measure}`} />
                 </ListItemButton>
@@ -153,11 +141,7 @@ const RecipePage = ({ params }: RecipePageProps) => {
             {categoryRecipes.slice(0, 4).map((r) => (
               <ListItemButton
                 key={r.idMeal}
-                onClick={() =>
-                  router.push(
-                    `/recipes?category=${encodeURIComponent(r.strCategory)}`
-                  )
-                }
+                onClick={() => router.push(`/?category=${recipe.strCategory}`)}
                 sx={{ display: "flex", alignItems: "center", gap: 1 }}
               >
                 <img

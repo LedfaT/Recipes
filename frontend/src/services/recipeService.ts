@@ -7,7 +7,17 @@ class RecipeService {
       const response = await $api.get("/recipe/list", {
         params: params,
       });
-      console.log(response);
+
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static async getRecipe(id: number) {
+    try {
+      const response = await $api.get(`/recipe/${id}`);
+
       return response.data;
     } catch (e) {
       throw e;

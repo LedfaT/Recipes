@@ -1,7 +1,7 @@
 "use client";
 
 import { Container, Typography, Grid, CircularProgress } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import OwnCard from "@components/ui/ownCard";
 import RecipeFilters, { FilterType } from "@components/ui/recipeFilters";
 import { useEffect, useMemo, useState } from "react";
@@ -12,6 +12,7 @@ const pageSize = 10;
 
 const RecipeListPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [page, setPage] = useState(1);
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -19,10 +20,6 @@ const RecipeListPage = () => {
 
   const [filterType, setFilterType] = useState<FilterType>("");
   const [filterValue, setFilterValue] = useState("");
-
-  const handleRecipeClick = (id: string) => {
-    router.push(`/recipe/${id}`);
-  };
 
   const fetchRecipes = async (filters = {}) => {
     setRecipeLoading(true);
@@ -37,18 +34,42 @@ const RecipeListPage = () => {
     }
   };
 
+  useEffect(() => {
+    const ingredient = searchParams.get("ingredient");
+    const category = searchParams.get("category");
+    const country = searchParams.get("country");
+
+    if (ingredient) {
+      setFilterType("ingredient");
+      setFilterValue(ingredient);
+      fetchRecipes({ ingredient });
+    } else if (category) {
+      setFilterType("category");
+      setFilterValue(category);
+      fetchRecipes({ category });
+    } else if (country) {
+      setFilterType("country");
+      setFilterValue(country);
+      fetchRecipes({ country });
+    } else {
+      setFilterType("");
+      setFilterValue("");
+      fetchRecipes();
+    }
+  }, [searchParams]);
+
   const handleFilterTypeChange = (type: FilterType) => {
     setFilterType(type);
     setFilterValue("");
-    setPage(1);
   };
 
   const handleFilterValueChange = (value: string) => {
     setFilterValue(value);
     setPage(1);
 
-    if (filterType) {
-      fetchRecipes({ [filterType]: value });
+    if (filterType && value) {
+      const query = `?${filterType}=${value}`;
+      router.push(`/${query}`);
     }
   };
 
@@ -59,10 +80,6 @@ const RecipeListPage = () => {
     setPage(value);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  useEffect(() => {
-    fetchRecipes({});
-  }, []);
 
   const pageCount = Math.ceil(recipes.length / pageSize);
 
@@ -102,7 +119,7 @@ const RecipeListPage = () => {
                 <OwnCard
                   title={recipe.strMeal}
                   imageUrl={recipe.strMealThumb}
-                  onClick={() => handleRecipeClick(recipe.idMeal)}
+                  onClick={() => router.push(`/recipe/${recipe.idMeal}`)}
                 />
               </Grid>
             ))}
