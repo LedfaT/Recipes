@@ -7,10 +7,10 @@ class RecipeService {
       const response = await $api.get("/recipe/list", {
         params: params,
       });
-
+      console.log(response);
       return response.data;
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   }
 }

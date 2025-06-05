@@ -2,6 +2,8 @@
 import { Container, Typography, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import OwnCard from "@components/ownCard";
+import { useEffect, useState } from "react";
+import RecipeService from "@/services/recipeService";
 const recipes = [
   {
     id: "52772",
@@ -20,6 +22,19 @@ const RecipeListPage = () => {
   const handleRecipeClick = (id: string) => {
     router.push(`/recipe/${id}`);
   };
+
+  const [recipeLoading, setRecipeLoading] = useState<boolean>(true);
+  const fetchRecipes = async () => {
+    try {
+      const recipes = await RecipeService.getAllRecipes({});
+    } catch (error) {
+      console.error("Failed to fetch recipes", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
 
   return (
     <Container sx={{ py: 4 }}>
