@@ -46,7 +46,6 @@ class RecipeController {
   static async getRecipe(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      console.log(id);
 
       const resp = await axios.get(
         `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
