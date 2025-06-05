@@ -15,14 +15,14 @@ class RecipeController {
         const resp = await axios.get(
           `https://www.themealdb.com/api/json/v1/1/filter.php?c=${filter.category}`
         );
-        res.json(resp.data);
+        res.json(resp.data["meals"]);
         return;
       }
       if (filter.ingredient) {
         const resp = await axios.get(
           `https://www.themealdb.com/api/json/v1/1/filter.php?i=${filter.ingredient}`
         );
-        res.json(resp.data);
+        res.json(resp.data["meals"]);
         return;
       }
 
@@ -30,17 +30,30 @@ class RecipeController {
         const resp = await axios.get(
           `https://www.themealdb.com/api/json/v1/1/filter.php?a=${filter.country}`
         );
-        res.json(resp.data);
+        res.json(resp.data["meals"]);
         return;
       }
 
       const resp = await axios.get(
         "https://www.themealdb.com/api/json/v1/1/search.php?s="
       );
-      res.json(resp.data);
+      res.json(resp.data["meals"]);
     } catch (error) {
       next(error);
     }
+  }
+
+  static async getRecipe(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      console.log(id);
+
+      const resp = await axios.get(
+        `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+      );
+
+      res.json(resp.data["meals"]);
+    } catch (e) {}
   }
 }
 
