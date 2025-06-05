@@ -9,6 +9,7 @@ import RecipeService from "@/services/recipeService";
 import PaginationControl from "@components/ui/paginationControl";
 
 const pageSize = 10;
+let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const RecipeListPage = () => {
   const router = useRouter();
@@ -67,10 +68,20 @@ const RecipeListPage = () => {
     setFilterValue(value);
     setPage(1);
 
-    if (filterType && value) {
-      const query = `?${filterType}=${value}`;
-      router.push(`/${query}`);
+    if (!filterType) return;
+
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
     }
+
+    debounceTimeout = setTimeout(() => {
+      if (value.trim() === "") {
+        router.push(`/`);
+      } else {
+        const query = `?${filterType}=${encodeURIComponent(value)}`;
+        router.push(`/${query}`);
+      }
+    }, 1000);
   };
 
   const handlePageChange = (

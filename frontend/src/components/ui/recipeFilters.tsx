@@ -24,15 +24,12 @@ const RecipeFilters = ({
   onFilterTypeChange,
   onFilterValueChange,
 }: RecipeFiltersProps) => {
-  // Обработчик изменения типа фильтра
   const handleFilterTypeChange = (event: SelectChangeEvent) => {
     const newFilterType = event.target.value as FilterType;
     onFilterTypeChange(newFilterType);
-    // Сбрасываем значение при смене типа фильтра
     onFilterValueChange("");
   };
 
-  // Обработчик изменения значения фильтра
   const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onFilterValueChange(event.target.value);
   };
