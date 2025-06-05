@@ -27,7 +27,6 @@ const RecipeFilters = ({
   const handleFilterTypeChange = (event: SelectChangeEvent) => {
     const newFilterType = event.target.value as FilterType;
     onFilterTypeChange(newFilterType);
-    onFilterValueChange("");
   };
 
   const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {

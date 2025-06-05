@@ -27,7 +27,6 @@ const RecipeListPage = () => {
     try {
       const data = await RecipeService.getAllRecipes(filters);
       setRecipes(data || []);
-      console.log("Fetched recipes:", data);
     } catch (error) {
       console.error("Failed to fetch recipes", error);
       setRecipes([]);
@@ -70,6 +69,10 @@ const RecipeListPage = () => {
   const handleFilterTypeChange = (type: FilterType) => {
     setFilterType(type);
     setFilterValue("");
+    if (type === "") {
+      router.push("/");
+    }
+    setPage(1);
   };
 
   const handleFilterValueChange = (value: string) => {
@@ -83,12 +86,8 @@ const RecipeListPage = () => {
     }
 
     debounceTimeout = setTimeout(() => {
-      if (value.trim() === "") {
-        router.push(`/?${filterType}=`);
-      } else {
-        const query = `?${filterType}=${encodeURIComponent(value)}`;
-        router.push(`/${query}`);
-      }
+      const query = `?${filterType}=${encodeURIComponent(value)}`;
+      router.push(`/${query}`);
     }, 1000);
   };
 
