@@ -15,7 +15,7 @@ Install dependencies:
 
 npm install
 
-# or
+or
 
 yarn install
 
@@ -24,7 +24,7 @@ Start the backend server with nodemon and TypeScript support:
 
 npm run dev
 
-# or
+or
 
 yarn dev
 
@@ -42,7 +42,7 @@ Install dependencies:
 
 npm install
 
-# or
+or
 
 yarn install
 
@@ -51,7 +51,7 @@ Start the Next.js dev server:
 
 npm run dev
 
-# or
+or
 
 yarn dev
 Open your browser and go to http://localhost:3000.
@@ -61,13 +61,13 @@ To build the frontend for production:
 
 npm run build
 
-# or
+or
 
 yarn build
 Start the production server:
 
 npm start
 
-# or
+or
 
 yarn start
