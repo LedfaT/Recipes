@@ -44,19 +44,26 @@ const RecipeListPage = () => {
       setFilterType("ingredient");
       setFilterValue(ingredient);
       fetchRecipes({ ingredient });
-    } else if (category) {
+      return;
+    }
+
+    if (category) {
       setFilterType("category");
       setFilterValue(category);
       fetchRecipes({ category });
-    } else if (country) {
+      return;
+    }
+
+    if (country) {
       setFilterType("country");
       setFilterValue(country);
       fetchRecipes({ country });
-    } else {
-      setFilterType("");
-      setFilterValue("");
-      fetchRecipes();
+      return;
     }
+
+    setFilterType("");
+    setFilterValue("");
+    fetchRecipes();
   }, [searchParams]);
 
   const handleFilterTypeChange = (type: FilterType) => {
