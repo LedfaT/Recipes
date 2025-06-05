@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import axios from "axios";
-import { Filters } from "../types/mainTypes";
+import axios, { AxiosResponse } from "axios";
+import { Filters, Recipe } from "../types/mainTypes";
+import RecipeListOut from "../dtos/recipeListOut";
 
 class RecipeController {
   static async getAllRecipes(req: Request, res: Response, next: NextFunction) {
@@ -15,14 +16,16 @@ class RecipeController {
         const resp = await axios.get(
           `https://www.themealdb.com/api/json/v1/1/filter.php?c=${filter.category}`
         );
-        res.json(resp.data["meals"]);
+        const recipeListOut = RecipeController._recipeMapping(resp);
+        res.json(recipeListOut);
         return;
       }
       if (filter.ingredient) {
         const resp = await axios.get(
           `https://www.themealdb.com/api/json/v1/1/filter.php?i=${filter.ingredient}`
         );
-        res.json(resp.data["meals"]);
+        const recipeListOut = RecipeController._recipeMapping(resp);
+        res.json(recipeListOut);
         return;
       }
 
@@ -30,14 +33,17 @@ class RecipeController {
         const resp = await axios.get(
           `https://www.themealdb.com/api/json/v1/1/filter.php?a=${filter.country}`
         );
-        res.json(resp.data["meals"]);
+        const recipeListOut = RecipeController._recipeMapping(resp);
+        res.json(recipeListOut);
         return;
       }
 
       const resp = await axios.get(
         "https://www.themealdb.com/api/json/v1/1/search.php?s="
       );
-      res.json(resp.data["meals"]);
+
+      const recipeListOut = RecipeController._recipeMapping(resp);
+      res.json(recipeListOut);
     } catch (error) {
       next(error);
     }
@@ -51,8 +57,14 @@ class RecipeController {
         `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
       );
 
-      res.json(resp.data["meals"]);
+      const recipeListOut = this._recipeMapping(resp);
+      res.json(recipeListOut);
     } catch (e) {}
+  }
+
+  static _recipeMapping(resp: AxiosResponse) {
+    const rec = resp.data["meals"];
+    return rec.map((recipe: Recipe) => new RecipeListOut(recipe));
   }
 }
 
